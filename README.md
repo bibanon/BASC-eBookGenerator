@@ -1,12 +1,71 @@
-The Bibliotheca Anonoma  compiles its stories into ebooks, by converting them into EPUB format, and from there into PDF and MOBI format.
+BASC EPUBCreator is a script that creates an EPUB ebook using Markdown and a defined folder structure.
 
-These ebooks are usually read on an iPad, Kindle, or other epaper based readers.
+It was designed for the Bibliotheca Anonoma StoryCorps, to compile it's archived stories into ebooks into EPUB and MOBI format, for easy viewing on an ebook reader.
 
-## Standards
+## Dependencies
 
-* **Markdown** - All pages must be initially written in Markdown. Pandoc will convert Markdown into the HTML markup that EPUB uses.
-* **Libre Baskerville** - The default Serif font used. - [Google Web Fonts](http://www.google.com/fonts/specimen/Libre+Baskerville)
-* **Source Sans Pro** - The default Sans Serif font used. - [Google Web Fonts](https://www.google.com/fonts/specimen/Source+Sans+Pro)
+Linux or Mac OS X is strongly recommended.
+
+* Bash Shell - Required to run the bash script.
+* Pandoc - Used as the backend for converting Markdown into EPUB.
+* kindlegen (optional) - Converts EPUB to Amazon Kindle compatible MOBI format.
+
+## Usage
+
+Once Pandoc and Kindlegen is installed, use the Bash script `create-epub.sh` to quickly build an ebook.
+
+* `./create-epub.sh <ebook-folder>`
+* `./create-epub.sh <ebook-folder> [-a]`
+* `./create-epub.sh <ebook-folder> [-ak]`
+* `./create-epub.sh <ebook-folder> [-c=<folder>]`
+
+    create-epub.sh
+    
+    Usage:
+      ./create-epub.sh <ebook-folder>
+      ./create-epub.sh <ebook-folder> [-a]
+      ./create-epub.sh <ebook-folder> [-ak]
+      ./create-epub.sh <ebook-folder> [-c=<folder>]
+    
+    Options:
+      -a --compile-all-folders      All ebook source code in the same folder as 
+                                    this script will be compiled.
+      -k --also-generate-kindle-mobi (Requires KindleGen) Amazon Kindle devices
+                                     are unable to read EPUB-format ebooks, only
+                                     MOBI. This script has the option to use 
+                                     Amazon's KindleGen to convert EPUB into MOBI-
+                                     format ebooks.
+      -o --output-folder=<folder>   By default, the EPUB file is placed into the
+                                    ebook source folder. However, this can be
+                                    somewhat inconvenient. Use this option to
+                                    choose an output folder where the EPUBs
+                                    should be placed. (will be created if folder
+                                    does not exist)
+
+### Example Ebook: "Lorem Ipsum"
+
+Included with this script is an example ebook to compile and mess around with, called "Lorem Ipsum".
+
+Use this command to create 
+
+    ./create-epub.sh "Lorem Ipsum" -f
+
+That example ebook implements all possible features of the script, so it is a good place to start.
+
+## Design
+
+The script supplements Pandoc's ability to convert Markdown pages into EPUB ebooks with the following features:
+
+Pandoc is already capable of creating EPUB files from Markdown Pages
+
+* Ebook Source Code Folders
+  * All necessary files, pages, and instructions for the eBook are kept in a single folder, just like a programmer would for the source code of a program.
+* One touch Makefile-style compilation.
+  * Once the ebook source code is set up, just run the script `./create-epub.sh` each time you want to build it. No extra arguments, updates, or thought needed.
+* Build multiple ebooks at once
+  * By running `./create-epub.sh` with the `--compile-all-ebooks` flag, all ebook source code in the same folder as the script will be instantly compiled.
+* Automatically generate MOBI files for Amazon Kindle devices.
+  * Amazon Kindle devices are unable to read EPUB-format ebooks, only MOBI. This script has the option to use Amazon's KindleGen to convert EPUB into MOBI-format ebooks.
 
 ## Prequisites
 
@@ -14,72 +73,99 @@ These ebooks are usually read on an iPad, Kindle, or other epaper based readers.
 * **Pandoc** - Pandoc converts Markdown and/or LaTeX files into every single possible format for text to be presented in; including EPUB.
 * **Kindlegen** - Amazon's app, used to convert an EPUB into a Kindle-readable MOBI format.
 
+    sudo apt-get install pandoc python-beautifulsoup python-yaml
+
+Also install `kindlegen` here: <http://www.amazon.com/gp/feature.html?docId=1000765211>
+
 ## Folder Structure
 
-These files are needed for Pandoc to create an EPUB file.
+The most basic structure for an ebook is shown below:
 
-* `my-ebook.md` - The contents of the ebook itself, in Markdown format. Chapters are divided using H1 `# Chapter Title` tags.
-* `cover.jpg` - The cover image to be used on the ebook. For best results, the image should be Vertical Rectangular, and less than 1000px.
-* `stylesheet.css` - Defines the look of the EPUB, using CSS. We will use it to set our fonts.
+* `metadata.yaml`
+* `cover.jpg`
+* `pages/`
+  * `1-everything.md`
 
-Files to be embedded into the book will also be stored under these folders:
+A typical structure for a large novel is shown below:
 
-* `images/` - Folder containing all the images linked to in `my-ebook.md`. Pandoc will automatically embed them into the ebook.
-* `fonts/` - Folder containing all the fonts to be embedded into the EPUB. The location of each font has to be specified in a Pandoc argument: `--epub-embed-font="<font>"`
+* `metadata.yaml`
+* `cover.png`
+* `stylesheet.css`
+* `pages/`
+  * `0-foreword.md`
+  * `00-prologue.md`
+  * `1-chapter-1.md`
+  * `2-chapter-2.md`
+  * `3-chapter-3.md`
+  * `4-chapter-4.md`
+  * and so on...
+* `images/`
+  * `snakes.jpg`
+  * `leaflet.png`
+  * `diagrams/`
+    * `figure_1.png`
+    * `figure_2.png`
+  * `portraits/`
+    * `author-portrait.jpg`
+    * `editor-portrait.jpg`
+* `fonts/`
+  * `LibreBaskerville-Regular.ttf`
+  * `LibreBaskerville-Italic.ttf`
+  * `LibreBaskerville-Bold.ttf`
 
-### `my-ebook.md` - Markdown Ebook Source Code
+For a closer look, check out and mess with the example book included in this repository, `Lorem_Ipsum`.
 
-The Markdown ebook source should be combined into one file, with each Chapter seperated with the H1 tag `# Chapter Title`. 
+## Components
 
-Pandoc will automatically embed any images referenced in the markdown file into the ebook.
+Each of the component files and folders are described in detail below.
 
-The format will look as follows:
+### `metadata.yaml` File
 
-```markdown
-    # Chapter 1
-    
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque id faucibus augue, ac iaculis nibh. Donec volutpat pellentesque elementum. Pellentesque massa urna, porta scelerisque nisl id, dapibus egestas enim. Aenean sed nibh orci. Nullam a consectetur tortor. Sed et pellentesque turpis, id rutrum eros. Quisque id vestibulum justo, id posuere dolor. Sed felis nunc, porta et tortor ac, eleifend sagittis magna.
-    
-    # Chapter 2
-    
-    Donec faucibus, lacus eget dignissim imperdiet, nisi massa dictum massa, vel aliquam justo magna sed odio. Donec sagittis nulla ac gravida posuere. Morbi fringilla sem ligula, vel consequat nibh dignissim eu. Donec sodales odio eu dolor vehicula molestie.
-    
-    ## Subsection I
-    
-    Aliquam vitae massa nisi. Integer eleifend, mi eget euismod lobortis, ante urna mollis erat, id vulputate massa purus et velit. Suspendisse rutrum semper felis quis porttitor.
-    
-    * Sed eget ligula eu velit sollicitudin rutrum.
-    * Aliquam eleifend nisi at urna commodo adipiscing. 
-    
-    ## Subsection II
-    
-    Nulla pellentesque scelerisque metus, sit amet lobortis felis consectetur eget. Ut non tortor vestibulum, faucibus arcu fermentum, mattis est. Etiam scelerisque rutrum orci, ut laoreet mauris ullamcorper sit amet. Duis fringilla tincidunt dui. Curabitur vel ullamcorper nibh.
-    
-    ### Subsubsection A
-    
-    ![Fig. 1: Aliquam eleifend fermentum sapien](images/aliquam.jpg)
-    
-    Suspendisse pulvinar in diam volutpat facilisis. Nunc viverra consectetur ullamcorper. Aliquam eleifend fermentum sapien, id aliquet quam rhoncus id. Integer dictum ullamcorper ligula, id sollicitudin turpis feugiat eu. 
-    
-    ### Subsubsection B
-    
-    Cras quis ultrices quam. Duis eleifend ac lectus et vestibulum. Etiam ultrices non nunc non venenatis. Aliquam pharetra quis orci sit amet dapibus. Donec porta vestibulum lacus non fermentum. Vestibulum fringilla dui eget vehicula laoreet. 
-```
+> The `metadata.yaml` file is a plain text YAML filejust make sure that they are  config that specifies the title, author, and any identifiers of the book, as specified by the [Dublin Core Metadata Standard](http://dublincore.org/documents/dces/). It is also used to specify the filename of the cover image (either `cover.jpg` or `cover.png`) and CSS stylesheet.
 
-* There are ways for Pandoc to grab Chapter in seperate files, but we'd like to keep it simple, so stick to one monolithic file.
-* Alternatively, by setting the `--toc-depth=2` command in Pandoc, H2 tags `## Chapter Title` can be used as Chapter seperators. But you should only use this when the story was already in one single file when taken from the wiki.
+The first entry defines the filename of the cover image to use. This cover image must be placed in the same folder as the `metadata.yaml`
 
-### YAML Metadata Block
+    cover-image:  cover.jpg
 
-[Pandoc supports a special YAML metadata block](http://johnmacfarlane.net/pandoc/demo/example9/epub-metadata.html), instead of having to use `metadata.xml`.
+If the cover image to use is a PNG, simply change the `.jpg` extension in the example below into `.png`.
 
-It is also used to specify the cover image (either in JPG or PNG format) and CSS stylesheet, without needing to use a Pandoc argument.
-
-Place the metadata block into the very top of your Markdown file, and edit the fields accordingly:
-
-```
-    ---
     cover-image:  cover.png
+
+If no cover image is found, the ebook will be simply be compiled without one.
+
+The next entry defines the filename of the stylesheet used. If that stylesheet isn't found, Pandoc's default stylesheet will be used.
+
+    stylesheet:  stylesheet.css
+
+The `title` entry has two subtypes, `main` and `subtitle`.
+
+    title:
+    - type: main
+      text: My Book
+    - type: subtitle
+      text: An investigation of metadata
+
+Give credit to contributors in this book under the `creator` entry.
+
+    creator:
+    - role: author
+      text: John Smith
+    - role: editor
+      text: Sarah Jones
+
+The last entries define the identifier, the publisher, and copyrights. These entries are only relevant if the book has been published.
+
+    identifier:
+    - scheme: DOI
+      text: doi:10.234234.234/33
+    publisher:  My Press
+    rights:  (c) 2007 John Smith, CC BY-NC
+
+The complete example `metadata.yaml` is shown below:
+
+```yaml
+    ---
+    cover-image:  cover.jpg
     stylesheet:  stylesheet.css
     title:
     - type: main
@@ -96,12 +182,163 @@ Place the metadata block into the very top of your Markdown file, and edit the f
       text: doi:10.234234.234/33
     publisher:  My Press
     rights:  (c) 2007 John Smith, CC BY-NC
-    ...
 ```
 
-### `stylesheet.css` - Style and Font settings
+### `pages/` Folder
 
-Use this to specify fonts and HTML styling to use. Make sure that you embed the actual font files into the ebook using the Pandoc argument `--epub-embed-font="<font>"`
+This folder contains the actual text of the ebook in Markdown format.
+
+Notice that the pages will be joined together in numerical (or alphabetical) order. To keep the pages in the order desired, number them as shown below.
+
+* `pages/`
+  * `0-foreword.md`
+  * `00-prologue.md`
+  * `0001-chapter-1-the-beginning.md`
+  * `0002-chapter-2-the-second-part.md`
+  * `0003-chapter-3-the-third-part.md`
+  * `0004-chapter-4-part-quattro.md`
+  * ...
+  * `0019-chapter-19-part-nineteen.md`
+  * ...
+  * `2156-chapter-2156-excessive-amount-of-chapters.md`
+  * and so on...
+
+The zeros preceding each filename number ensure that they are not misplaced by the computer. Computers use a simple method of ordering files that check character by character, causing the following numbers:
+
+* 1
+* 2
+* 3
+* 15
+* 27
+
+to be ordered as follows:
+
+* 1
+* 15
+* 2
+* 27
+* 3
+
+Adding zeros to the beginning of each number bypasses this issue.
+
+* 0001
+* 0002
+* 0003
+* 0133
+* 4587
+
+No subfolders are allowed in the `pages/` folder, in the interest of enforcing clarity.
+
+### Markdown Pages
+
+The files under the `pages/` folder contain the text of the the ebook, written in Markdown format.
+
+Check out Mashery's [Markdown Cheatsheet](http://support.mashery.com/docs/read/customizing_your_portal/Markdown_Cheat_Sheet) for a quick overview of the format.
+
+* Chapters are divided using H1 `# Title` header tags.
+  * The header tags create the chapters, not the files. Make sure each chapter has a header tag at the top.
+
+
+
+* Make sure to **leave an empty line at the beginning or end of each file.**
+  * This is because Pandoc quite literally smashes the pages together into one file, which can cause the Chapter H1 header tags to be joined to the end of the previous file. By leaving an empty line, there is enough space to leave the header tag on it's own line.
+
+
+
+* Markdown can also use inline HTML.
+  * If there is something that Markdown can't offer (there isn't much), just use typical HTML code anywhere it's needed.
+
+### `images/` Folder
+
+> All the images embedded in the ebook, *except for the cover image*, are placed in the `images/` folder, and linked to using relative links.
+
+Although images can be linked from around the internet as usual (e.g. `![](http://imgur.com/12345.jpg)` ), it is good practice to keep a local copy of all images used, placing them under the `images/` folder.
+
+To embed an image called `picture.jpg` under the `images/` folder in the book, use the Markdown syntax shown below:
+
+    ![](images/picture.jpg)
+
+> **Note:** Even though the `images/` folder is above the `pages/` folder, use the above syntax as shown. Do not use `![](../images/picture.jpg)`, or even worse, absolute links. `![](file:///home/user/BA-EPUB/Book/images/picture.jpg)`.  
+> This is because Pandoc interprets relative links from the root of the epub source code folder.
+
+An image caption can be used, which will be displayed just below.
+
+    ![This is a JPEG image.](images/picture.jpg)
+
+Subfolders inside the `images/` folder are allowed, as long as the images within are linked to correctly.
+
+For example, if the `images/` folder has a subfolder `diagrams/`, which contains the image `picture.jpg` inside, use this Markdown syntax:
+
+    ![](images/diagrams/picture.jpg)
+
+In fact, complicated subfolder structures are allowed as long as the Markdown link reflects the location of the image.
+
+    ![](images/diagrams/Snakes/Pythons/Burmese_Pythons/teeth.jpg)
+
+If the image is too big for the page, use the HTML image embed tag to set the height and width manually. Alternatively, save space and create a resized version with Photoshop, Imagemagick, or some other image editing utility.
+
+    <img src="smiley.jpg" width="42" height="42">
+
+If the text has to reflow around an image (float), use the HTML image embed tag. Set `style="float:left"` make the image float to the left of the text, and `style="float:right"` to make the image float to the right.
+
+    <img src="smiley.gif" style="float:left">
+
+### `cover.jpg` or `cover.png` File (optional)
+
+> `cover.jpg` or `cover.png` is the image that will be used as the cover of the ebook.
+
+The cover image can be either `JPEG` or `PNG` format. However, when switching formats, ensure that the filename in `metadata.yaml` has the correct extension.
+
+Also, ensure that the cover image is stored at the top of the EPUB source code folder, as shown in the folder structure below:
+
+* `cover.jpg`
+* `metadata.yaml`
+* `pages`
+  * `1-chapter-1.md`
+  * `2-chapter-2.md`
+* `images/`
+  * `image1.jpg`
+
+If no cover image is needed, simply don't include one.
+
+### `stylesheet.css` File (optional)
+
+> Since EPUBs are based on web technologies, CSS can be used to spice up the font and formatting of the ebook. Just don't overdo it. Usually, *no changes are necessary.*
+
+The most that should be changed is the font face; if the book is written in a Unicode language that the ; or for stylistic
+
+Generally, leave the layout alone, since the ereader can change margins and such on it's own.
+
+### Default Pandoc CSS
+
+This is the basic CSS stylesheet used by Pandoc, which will be used if no `stylesheet.css` file is provided.
+
+It is almost always enough for most purposes.
+
+```css
+    /* This defines styles and classes used in the book */
+    body { margin: 5%; text-align: justify; font-size: medium; }
+    code { font-family: monospace; }
+    h1 { text-align: left; }
+    h2 { text-align: left; }
+    h3 { text-align: left; }
+    h4 { text-align: left; }
+    h5 { text-align: left; }
+    h6 { text-align: left; }
+    h1.title { }
+    h2.author { }
+    h3.date { }
+    ol.toc { padding: 0; margin-left: 1em; }
+    ol.toc li { list-style-type: none; margin: 0; padding: 0; }
+```
+
+### Font Family CSS
+
+To make a font face available, add the CSS code below to `stylesheet.css`. 
+
+Don't forget to place the actual `.ttf` font faces under the `fonts/` folder (explained below).
+
+For example, the DejaVuSans font family is declared below:
 
 ```css
     @font-face {
@@ -131,68 +368,15 @@ Use this to specify fonts and HTML styling to use. Make sure that you embed the 
     body { font-family: "DejaVuSans"; }
 ```
 
-### Download the Font files from Google Web Fonts
+After embedding a font, the font must be implemented in the CSS, as described in [this guide](http://www.pigsgourdsandwikis.com/2011/04/embedding-fonts-in-epub-ipad-iphone-and.html)
 
-Use wget, and put them into the `fonts` folder. We will embed them into the ebook in the next command.
+### `fonts/` Folder (optional)
+
+If `.ttf` fonts need to be embedded, create this folder and place the `.ttf` files inside. The script will automatically embed those fonts into the EPUB. Don't forget to declare the fonts in `stylesheet.css` (explained above).
+
+No subfolders are allowed in this folder.
+
+### Font Theming
 
 * **Libre Baskerville** - The default Serif font used. - [Google Web Fonts](http://www.google.com/fonts/specimen/Libre+Baskerville)
 * **Source Sans Pro** - The default Sans Serif font used. - [Google Web Fonts](https://www.google.com/fonts/specimen/Source+Sans+Pro)
-
-## Pandoc Command
-
-When everything is set, use this Pandoc command to generate the ebook:
-
-    pandoc my-ebook.md -o my-ebook.epub --toc
-
-### Explanation
-
-* `-o "my-ebook.epub"`
-  * Tells pandoc to generate an EPUB file with the filename `my-ebook.epub`
-* `"my-ebook.md"`
-    * The actual ebook content in Markdown format. It contains multiple H1 tags, which will get split into different chapters. Other `.md` files can be placed after this argument to add more chapters. HTML can also be passed as input; even URLs can be used.
-
-* *The options below are superseded by Pandoc's YAML Metadata block, so are not needed, only kept here for reference.*
-  * `"title.txt"`
-    * Reads this file to create a title page and some title and author metadata. Optionally, this information may be appened to the beginning of the first input document.
-  * `--epub-cover-image="cover.jpg"`
-    * Creates a cover image file (from either JPG or PNG) and embeds the proper metadata
-  * `--epub-metadata="metadata.xml"`
-    * Additional Dublin core tags may be defined in this file, including published date, author, publisher, rights, and language. Some of information is pulled from `title.txt`, such as title, author & published date.
-  * `--epub-stylesheet="stylesheet.css"`
-    * Utilizes a custom stylesheet for any CSS changes or tweaks. Here, the stylesheet name is `stylesheet.css` 
-
-* `--toc`
-  * Tells Pandoc to add an HTML table of contents to the beginning of the EPUB file. The machine navigation and toc.ncx file are generated automatically, but at times, the HTML version was not always included.
-
-* `--toc-depth=2`
-  * Tells Pandoc to look at the H2 tags and add then as secondary navigation links within both the navigation file and the HTML index. By default, it will look at a depth of 3..
-
-* `--epub-embed-font="<font>"`
-  * Use this to embed font into the EPUB. Note that the fonts still need to be specified in `stylesheet.css`.
-
-[Source: PuppetLabs - Automated Ebook Generation with Pandoc and Markdown](http://puppetlabs.com/blog/automated-ebook-generation-convert-markdown-epub-mobi-pandoc-kindlegen)
-
-## EPUB Validator
-
-For good measure, check that the generated EPUB fits all standards using this webapp.
-
-<http://validator.idpf.org/>
-
-If the EPUB file is larger than 10MB, run the EPUBcheck app on a local computer.
-
-1. [Download the EPUBcheck app from Github:](https://github.com/IDPF/epubcheck/releases)
-
-2. Run the following command to validate the generated EPUB:
-
-    java -jar ~/Downloads/epubcheck-3.0.1/epubcheck-3.0.1.jar my-ebook.epub
-
-
-## Generate MOBI with KindleGen
-
-The Amazon Kindle is the most popular ebook reader in the US, but it is unable to read EPUB-formatted books. Instead a MOBI format ebook must be created, using Amazon's `kindlegen` EPUB to MOBI converter.
-
-[Install `kindlegen`](http://www.amazon.com/gp/feature.html?docId=1000765211) and run this command to convert EPUBs.
-
-    kindlegen my-ebook.epub
-
-A MOBI ebook, `my-ebook.mobi`, will be generated.
