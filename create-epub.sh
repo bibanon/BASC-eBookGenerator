@@ -18,10 +18,10 @@ FONT_FOLDER="fonts"
 # initial value
 CUSTOM_FONTS=false
 COMPILE_ALL_FOLDERS=false
-COMPILE_ALL_KINDLE=false
+COMPILE_KINDLE_MOBI=false
 
 # available options
-OPTS=`getopt -o ao -l compile-all-ebooks,output-folder: -- "$@"`
+OPTS=`getopt -o ako -l compile-all-ebooks,also-generate-kindle-mobi,output-folder: -- "$@"`
 
 # display usage prompt and quit if no arguments
 [[ $# -eq 0 ]] && usage
