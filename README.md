@@ -356,7 +356,7 @@ For example, the DejaVuSans font family is declared below:
     body { font-family: "DejaVuSans"; }
 ```
 
-After embedding a font, the font must be implemented in the CSS, as described in [this guide](http://www.pigsgourdsandwikis.com/2011/04/embedding-fonts-in-epub-ipad-iphone-and.html)
+[Source](http://www.pigsgourdsandwikis.com/2011/04/embedding-fonts-in-epub-ipad-iphone-and.html)
 
 ### `fonts/` Folder (optional)
 
