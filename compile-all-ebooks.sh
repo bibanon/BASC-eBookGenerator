@@ -74,24 +74,18 @@ done
 ##-------------Pass over ./compile-epub.sh arguments----------------##
 
 # create a list of all folders within current folder
-list=`find . -mindepth 1 -maxdepth 1 -type d  \( ! -iname ".*" \) | sed 's|^\./||g'`
+find_cmd="""find . -mindepth 1 -maxdepth 1 -type d -exec"""
 
-# run epub compiler script on each folder
-for i in $list
-do
-    if [ ! "$i" == "." ]; then
-      if [[ -n "$OUTPUT_FOLDER" ]]; then
-        if [ "$COMPILE_KINDLE_MOBI" = true ] ; then
-          $EPUB_COMPILER -k ${i} -o $OUTPUT_FOLDER
-        else
-          $EPUB_COMPILER ${i} -o $OUTPUT_FOLDER
-        fi
-      else
-        if [ "$COMPILE_KINDLE_MOBI" = true ] ; then
-          $EPUB_COMPILER -k ${i}
-        else
-          $EPUB_COMPILER ${i}
-        fi
-      fi
-    fi
-done
+if [[ -n "$OUTPUT_FOLDER" ]]; then
+  if [ "$COMPILE_KINDLE_MOBI" = true ] ; then
+    $find_cmd $EPUB_COMPILER -k '{}' -o "$OUTPUT_FOLDER" \;
+  else
+    $find_cmd $EPUB_COMPILER '{}' -o "$OUTPUT_FOLDER" \;
+  fi
+else
+  if [ "$COMPILE_KINDLE_MOBI" = true ] ; then
+    $find_cmd $EPUB_COMPILER -k '{}' \;
+  else
+    $find_cmd $EPUB_COMPILER '{}' \;
+  fi
+fi

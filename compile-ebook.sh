@@ -166,26 +166,36 @@ for EBOOK_FOLDER ; do
         LIST_OF_FONTS+=" "
       done
       # append arguments to pandoc command
-      pandoc metadata.md $PAGES_FOLDER/*.md -o "$EBOOK_FOLDER.epub" --toc $LIST_OF_FONTS
+      pandoc metadata.md "$PAGES_FOLDER"/*.md -o "$EBOOK_FOLDER.epub" --toc $LIST_OF_FONTS
     else
-      pandoc metadata.md $PAGES_FOLDER/*.md -o "$EBOOK_FOLDER.epub" --toc
+      pandoc metadata.md "$PAGES_FOLDER"/*.md -o "$EBOOK_FOLDER.epub" --toc
+    fi
+
+    # check if EPUB was created
+    if [ -f "$EBOOK_FOLDER.epub" ]; then
+      echo $TAG "$EBOOK_FOLDER.epub built successfully."
+    else
+      echo $TAG "Error: $EBOOK_FOLDER.epub not built."
     fi
 
     # Use kindlegen to create a MOBI file, sending kindlegen output to log file
     if [ "$COMPILE_KINDLE_MOBI" = true ] ; then
       LOG_FILE="$EBOOK_FOLDER.mobi.log"
-      kindlegen "$EBOOK_FOLDER.epub" > $LOG_FILE
+
+      if hash kindlegen 2>/dev/null; then
+        kindlegen "$EBOOK_FOLDER.epub" > $LOG_FILE
+
+        # check if MOBI was created
+        if [ -f "$EBOOK_FOLDER.mobi" ]; then
+          echo $TAG "$EBOOK_FOLDER.mobi built successfully."
+        else
+          echo $TAG "Error: $EBOOK_FOLDER.mobi not built."
+        fi
+      else
+        echo $TAG "Kindlegen is not installed, cannot generate MOBI..."
+      fi
     fi
 
-    ##-------------Completion Check----------------##
-
-    if [ -f "$EBOOK_FOLDER.epub" ]; then
-      echo $TAG "$EBOOK_FOLDER.epub built successfully."
-    fi
-
-    if [ -f "$EBOOK_FOLDER.mobi" ]; then
-      echo $TAG "$EBOOK_FOLDER.mobi built successfully."
-    fi
     ##-------------Optional Output Folder----------------##
 
     # if output folder enabled, move the generated ebooks into it

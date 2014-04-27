@@ -21,12 +21,19 @@ Pandoc is already capable of creating EPUB files from Markdown Pages
 
 * Linux or Mac OS X - Windows with Cygwin may work, but is not recommended.
 * Bash Shell - The default command line in Linux and Mac OS X. Required to run the bash script.
-* [Pandoc](http://johnmacfarlane.net/pandoc/) - Pandoc converts Markdown files into every single possible format for text to be presented in; including EPUB.
+* [Pandoc](http://johnmacfarlane.net/pandoc/) (versions > 1.12.2) - Pandoc converts Markdown files into every single possible format for text to be presented in; including EPUB.
+  * **Version 1.12.2 or greater** of Pandoc is required, which introduces EPUB YAML metadata support. Make sure that you have such a version; Ubuntu Trusty 14.04 is the latest Ubuntu version with it.
 * [kindlegen](http://www.amazon.com/gp/feature.html?docId=1000765211) (optional) - Converts EPUB to Amazon Kindle compatible MOBI format.
 
-Pandoc can be easily installed on Debian/Ubuntu systems with the following command:
+If you're running Ubuntu 14.04, Pandoc 1.12.2 can be installed normally:
 
     sudo apt-get install pandoc
+
+If you're using an Ubuntu version older than 14.04, install Pandoc 1.12.2 manually by using Haskell Cabal:
+
+    sudo apt-get install cabal-install
+    sudo cabal update
+    sudo cabal install pandoc --global
 
  `kindlegen` can be downloaded from here: <http://www.amazon.com/gp/feature.html?docId=1000765211>
 

@@ -4,13 +4,11 @@ stylesheet: stylesheet.css
 title:
 - type: main
   text: Lorem Ipsum
-#- type: subtitle
-#  text: Dolor sit amet, consectetur adipiscing elit.
+- type: subtitle
+  text: Dolor Sit Amet
 creator:
 - role: author
   text: John Smith
-- role: editor
-  text: Sarah Jones
 identifier:
 - scheme: ISBN
   text: 978-1-58836-849-2
