@@ -166,9 +166,9 @@ for EBOOK_FOLDER ; do
         LIST_OF_FONTS+=" "
       done
       # append arguments to pandoc command
-      pandoc metadata.md "$PAGES_FOLDER"/*.md -o "$EBOOK_FOLDER.epub" --toc $LIST_OF_FONTS
+      awk 'FNR==1{print ""}1' metadata.md "$PAGES_FOLDER"/*.md | pandoc -o "$EBOOK_FOLDER.epub" --toc $LIST_OF_FONTS
     else
-      pandoc metadata.md "$PAGES_FOLDER"/*.md -o "$EBOOK_FOLDER.epub" --toc
+      awk 'FNR==1{print ""}1' metadata.md "$PAGES_FOLDER"/*.md | pandoc -o "$EBOOK_FOLDER.epub" --toc
     fi
 
     # check if EPUB was created
