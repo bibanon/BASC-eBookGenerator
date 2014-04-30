@@ -6,8 +6,6 @@ It was designed for use by the Bibliotheca Anonoma StoryCorps (BASC), to compile
 
 The script supplements Pandoc's ability to convert Markdown pages into EPUB ebooks with the following features:
 
-Pandoc is already capable of creating EPUB files from Markdown Pages
-
 * Ebook Source Code Folders
   * All necessary files, pages, and instructions for the eBook are kept in a single folder, just like a programmer would for the source code of a program.
 * One touch Makefile-style compilation.
@@ -19,8 +17,8 @@ Pandoc is already capable of creating EPUB files from Markdown Pages
 
 ## Dependencies
 
-* Linux or Mac OS X - Windows with Cygwin may work, but is not recommended.
-* Bash Shell - The default command line in Linux and Mac OS X. Required to run the bash script.
+* **Linux or Mac OS X** - Windows with Cygwin may work, but is not recommended.
+* **Bash Shell** - The default command line in Linux and Mac OS X. Required to run the bash script.
 * [Pandoc](http://johnmacfarlane.net/pandoc/) (versions > 1.12.2) - Pandoc converts Markdown files into every single possible format for text to be presented in; including EPUB.
   * **Version 1.12.2 or greater** of Pandoc is required, which introduces EPUB YAML metadata support. Make sure that you have such a version; Ubuntu Trusty 14.04 is the latest Ubuntu version with it.
 * [kindlegen](http://www.amazon.com/gp/feature.html?docId=1000765211) (optional) - Converts EPUB to Amazon Kindle compatible MOBI format.
@@ -46,7 +44,7 @@ Once Pandoc and Kindlegen is installed, use the Bash script `create-ebook.sh` to
 * `./compile-ebook.sh <ebook-folder> -k`
 * `./compile-ebook.sh <ebook-folder> -o <output-folder>`
 
-The included helper script `compile-all-epubs.sh` will find and compile every ebook folder, without having to provide folder names. It uses the same arguments as above, just omit `<ebook-folder>`
+The included helper script `compile-all-epubs.sh` will find and compile every ebook folder, without having to provide folder names. It uses the same arguments as above, just omit `<ebook-folder>` .
 
 ### Options
 
@@ -57,11 +55,11 @@ The included helper script `compile-all-epubs.sh` will find and compile every eb
 
 ### Example Ebook: "Lorem Ipsum"
 
-Included with this script is an example ebook to compile and mess around with, called "Lorem Ipsum". Use this command to create it:
+Included with this script is an example ebook, called "Lorem Ipsum". Use this command to create it:
 
     ./compile-ebook.sh "Lorem Ipsum"
 
-That example ebook implements all possible features of the script, so it is a good place to start.
+That example ebook implements all possible features of the script.
 
 ## Folder Structure
 
@@ -113,11 +111,11 @@ The first entry defines the filename of the cover image to use. This cover image
 
     cover-image:  cover.jpg
 
-If the cover image to use is a PNG, simply change the `.jpg` extension in the example below into `.png`.
+If the cover image to use is a PNG, simply change the `.jpg` extension into `.png`.
 
     cover-image:  cover.png
 
-If no cover image is found, the ebook will be simply be compiled without one.
+If no cover image is found, the ebook will be simply be compiled without one, so no need to remove the entry.
 
 The next entry defines the filename of the stylesheet used. If that stylesheet isn't found, Pandoc's default stylesheet will be used.
 
@@ -134,8 +132,8 @@ Optionally, a `subtitle` could be also used as a subtype of `title`.
     - type: subtitle
       text: An investigation of metadata
 
-> **Note:** Subtitles are only supported in EPUB, and not in Kindle-readable MOBI. KindleGen will not compile an EPUB file with a subtitle.  
-> When generating a MOBI ebook, comment out the subtitle type (precede the lines with `#`), or remove those lines entirely.
+> **Note:** KindleGen will not convert an EPUB file with a subtitle, since subtitles are not supported in Kindle-readable MOBI.
+> When generating a MOBI ebook, comment out the subtitle entry (precede the lines with `#`), or remove those lines entirely.
 
 Give credit to contributors in this book under the `creator` entry.
 
@@ -246,8 +244,7 @@ To embed an image called `picture.jpg` under the `images/` folder in the book, u
 
     ![](images/picture.jpg)
 
-> **Note:** Even though the `images/` folder is above the `pages/` folder, use the above syntax as shown. Do not use `![](../images/picture.jpg)`, or even worse, absolute links. `![](file:///home/user/BA-EPUB/Book/images/picture.jpg)`.  
-> This is because Pandoc interprets relative links from the root of the epub source code folder.
+> **Note:** Even though the `images/` folder is above the `pages/` folder, use the above syntax as shown. Do not use `![](../images/picture.jpg)`. Pandoc interprets relative links from the root of the EPUB source code folder.
 
 An image caption can be used, which will be displayed just below.
 
